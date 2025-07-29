@@ -1,23 +1,92 @@
 {
   "name": "gestion-pro",
   "version": "1.0.0",
-  "description": "Sistema de gestión profesional con facturación electrónica - PWA",
+  "description": "Sistema profesional de gestión y facturación electrónica - Enterprise PWA",
   "type": "module",
+  "private": true,
   "scripts": {
-    "dev": "vite --host",
-    "build": "vite build",
-    "preview": "vite preview --host"
+    "dev": "vite --host --port 3000",
+    "build": "tsc && vite build",
+    "preview": "vite preview --host --port 3001",
+    "test": "vitest",
+    "test:ui": "vitest --ui",
+    "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
+    "lint:fix": "eslint . --ext ts,tsx --fix",
+    "type-check": "tsc --noEmit",
+    "analyze": "npx vite-bundle-analyzer",
+    "clean": "rimraf dist"
   },
   "dependencies": {
-    "react": "^19.1.0",
-    "react-dom": "^19.1.0",
-    "@supabase/supabase-js": "^2.52.0"
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "@supabase/supabase-js": "^2.39.0",
+    "zustand": "^4.4.7",
+    "react-router-dom": "^6.20.1",
+    "react-hook-form": "^7.48.2",
+    "@hookform/resolvers": "^3.3.2",
+    "zod": "^3.22.4",
+    "date-fns": "^2.30.0",
+    "lodash": "^4.17.21",
+    "clsx": "^2.0.0",
+    "lucide-react": "^0.294.0",
+    "recharts": "^2.8.0",
+    "react-hot-toast": "^2.4.1",
+    "framer-motion": "^10.16.5",
+    "@headlessui/react": "^1.7.17",
+    "react-query": "^3.39.3",
+    "axios": "^1.6.2"
   },
   "devDependencies": {
-    "@types/node": "^22.14.0",
-    "@types/react": "^19.0.0",
-    "@types/react-dom": "^19.0.0",
-    "typescript": "~5.7.2",
-    "vite": "^6.2.0"
+    "@types/react": "^18.2.37",
+    "@types/react-dom": "^18.2.15",
+    "@types/lodash": "^4.14.202",
+    "@types/node": "^20.9.0",
+    "@typescript-eslint/eslint-plugin": "^6.11.0",
+    "@typescript-eslint/parser": "^6.11.0",
+    "@vitejs/plugin-react": "^4.1.1",
+    "eslint": "^8.54.0",
+    "eslint-plugin-react-hooks": "^4.6.0",
+    "eslint-plugin-react-refresh": "^0.4.4",
+    "typescript": "^5.2.2",
+    "vite": "^5.0.0",
+    "vite-plugin-pwa": "^0.17.4",
+    "vitest": "^0.34.6",
+    "@vitest/ui": "^0.34.6",
+    "rimraf": "^5.0.5",
+    "workbox-window": "^7.0.0"
+  },
+  "engines": {
+    "node": ">=18.0.0",
+    "npm": ">=9.0.0"
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  },
+  "keywords": [
+    "pwa",
+    "facturacion",
+    "gestion",
+    "react",
+    "typescript",
+    "supabase",
+    "enterprise",
+    "argentina",
+    "afip",
+    "arca"
+  ],
+  "author": "JLMarketing706",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/JLMarketing706/gestionpro.git"
   }
 }
