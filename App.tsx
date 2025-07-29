@@ -1,121 +1,273 @@
-
-
 import React, { useState, useEffect } from 'react';
-import AuthForm from './components/AuthForm';
-import Layout from './components/Layout';
-import { AppContextProvider } from './contexts/AppContext';
-import { supabase } from './services/supabase';
-import { UserProfile, Role } from './types';
-import { showToast } from './components/common/Toast';
-import { OnboardingProvider } from './components/common/Onboarding';
 
+// Simple loading component
+const LoadingSpinner = () => (
+  <div style={{ 
+    display: 'flex', 
+    height: '100vh', 
+    alignItems: 'center', 
+    justifyContent: 'center',
+    background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+    color: 'white'
+  }}>
+    <div style={{ textAlign: 'center' }}>
+      <div style={{
+        border: '4px solid #f3f3f3',
+        borderTop: '4px solid #3b82f6',
+        borderRadius: '50%',
+        width: '40px',
+        height: '40px',
+        animation: 'spin 1s linear infinite',
+        margin: '0 auto 20px'
+      }}></div>
+      <p>Iniciando Gestión Pro...</p>
+    </div>
+  </div>
+);
+
+// Simple auth form
+const AuthForm = ({ onLogin }: { onLogin: (user: any) => void }) => {
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    onLogin({ id: '1', email, name: 'Usuario Demo' });
+  };
+
+  return (
+    <div style={{
+      minHeight: '100vh',
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+      padding: '20px'
+    }}>
+      <div style={{
+        background: 'white',
+        padding: '40px',
+        borderRadius: '15px',
+        width: '100%',
+        maxWidth: '400px',
+        boxShadow: '0 10px 30px rgba(0,0,0,0.3)'
+      }}>
+        <div style={{ textAlign: 'center', marginBottom: '30px' }}>
+          <h1 style={{ fontSize: '2rem', fontWeight: 'bold', color: '#2c3e50', marginBottom: '10px' }}>
+            📊 Gestión Pro
+          </h1>
+          <p style={{ color: '#666' }}>Sistema de gestión profesional</p>
+        </div>
+        
+        <form onSubmit={handleSubmit} style={{ marginBottom: '30px' }}>
+          <div style={{ marginBottom: '20px' }}>
+            <label style={{ display: 'block', marginBottom: '8px', fontWeight: '500', color: '#2c3e50' }}>
+              Correo electrónico
+            </label>
+            <input
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              style={{
+                width: '100%',
+                padding: '12px',
+                border: '1px solid #ddd',
+                borderRadius: '8px',
+                fontSize: '16px',
+                boxSizing: 'border-box'
+              }}
+              required
+            />
+          </div>
+          
+          <div style={{ marginBottom: '20px' }}>
+            <label style={{ display: 'block', marginBottom: '8px', fontWeight: '500', color: '#2c3e50' }}>
+              Contraseña
+            </label>
+            <input
+              type="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              style={{
+                width: '100%',
+                padding: '12px',
+                border: '1px solid #ddd',
+                borderRadius: '8px',
+                fontSize: '16px',
+                boxSizing: 'border-box'
+              }}
+              required
+            />
+          </div>
+          
+          <button
+            type="submit"
+            style={{
+              width: '100%',
+              background: '#3b82f6',
+              color: 'white',
+              padding: '12px',
+              border: 'none',
+              borderRadius: '8px',
+              fontSize: '16px',
+              fontWeight: '600',
+              cursor: 'pointer'
+            }}
+          >
+            Iniciar sesión
+          </button>
+        </form>
+        
+        <button
+          onClick={() => onLogin({ id: 'google', email: 'usuario@gmail.com', name: 'Usuario Google' })}
+          style={{
+            width: '100%',
+            background: '#dc2626',
+            color: 'white',
+            padding: '12px',
+            border: 'none',
+            borderRadius: '8px',
+            fontSize: '16px',
+            fontWeight: '600',
+            cursor: 'pointer'
+          }}
+        >
+          🔍 Continuar con Google (Demo)
+        </button>
+      </div>
+    </div>
+  );
+};
+
+// Simple dashboard
+const Dashboard = ({ user, onLogout }: { user: any; onLogout: () => void }) => (
+  <div style={{ minHeight: '100vh', background: '#f5f5f5' }}>
+    <nav style={{
+      background: 'white',
+      padding: '20px',
+      boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
+      display: 'flex',
+      justifyContent: 'space-between',
+      alignItems: 'center'
+    }}>
+      <h1 style={{ fontSize: '1.5rem', fontWeight: '600', color: '#2c3e50', margin: 0 }}>
+        📊 Gestión Pro
+      </h1>
+      <div style={{ display: 'flex', alignItems: 'center', gap: '15px' }}>
+        <span style={{ color: '#666' }}>Bienvenido, {user.name}</span>
+        <button
+          onClick={onLogout}
+          style={{
+            background: '#dc2626',
+            color: 'white',
+            padding: '8px 16px',
+            border: 'none',
+            borderRadius: '6px',
+            cursor: 'pointer'
+          }}
+        >
+          Cerrar sesión
+        </button>
+      </div>
+    </nav>
+    
+    <main style={{ padding: '40px 20px', maxWidth: '1200px', margin: '0 auto' }}>
+      <div style={{
+        display: 'grid',
+        gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))',
+        gap: '20px',
+        marginBottom: '40px'
+      }}>
+        {[
+          { title: 'Ventas del mes', value: '$125,430', icon: '💰', color: '#3b82f6' },
+          { title: 'Clientes', value: '1,247', icon: '👥', color: '#10b981' },
+          { title: 'Productos', value: '856', icon: '📦', color: '#f59e0b' }
+        ].map((stat, index) => (
+          <div key={index} style={{
+            background: 'white',
+            padding: '30px',
+            borderRadius: '12px',
+            boxShadow: '0 2px 10px rgba(0,0,0,0.1)',
+            textAlign: 'center'
+          }}>
+            <div style={{ fontSize: '2rem', marginBottom: '10px' }}>{stat.icon}</div>
+            <div style={{ fontSize: '2rem', fontWeight: 'bold', color: stat.color, marginBottom: '5px' }}>
+              {stat.value}
+            </div>
+            <div style={{ color: '#666', fontSize: '14px' }}>{stat.title}</div>
+          </div>
+        ))}
+      </div>
+      
+      <div style={{
+        background: 'white',
+        padding: '30px',
+        borderRadius: '12px',
+        boxShadow: '0 2px 10px rgba(0,0,0,0.1)'
+      }}>
+        <h2 style={{ marginBottom: '20px', color: '#2c3e50' }}>Funcionalidades principales</h2>
+        <div style={{
+          display: 'grid',
+          gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
+          gap: '15px'
+        }}>
+          {[
+            { name: 'Ventas', icon: '🧾' },
+            { name: 'Clientes', icon: '👤' },
+            { name: 'Inventario', icon: '📊' },
+            { name: 'Reportes', icon: '📈' }
+          ].map((item, index) => (
+            <button key={index} style={{
+              background: '#f8f9fa',
+              border: '1px solid #e9ecef',
+              padding: '20px',
+              borderRadius: '8px',
+              cursor: 'pointer',
+              textAlign: 'center',
+              transition: 'background-color 0.3s'
+            }}>
+              <div style={{ fontSize: '2rem', marginBottom: '10px' }}>{item.icon}</div>
+              <div style={{ fontWeight: '500' }}>{item.name}</div>
+            </button>
+          ))}
+        </div>
+      </div>
+    </main>
+  </div>
+);
+
+// Main App component
 const App: React.FC = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [user, setUser] = useState<UserProfile | null>(null);
-  const [loading, setLoading] = useState(true); // Start with loading true
+  const [user, setUser] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // onAuthStateChange is the single source of truth for auth state.
-    // It fires once on initial load with the current session (or null),
-    // and then again whenever the auth state changes (login, logout).
-    const { data: authListener } = supabase.auth.onAuthStateChange(async (_event, session) => {
-      try {
-        if (session) {
-          // Step 1: Fetch profile without the implicit join that was causing errors.
-          const { data: profile, error: profileError } = await supabase
-            .from('profiles')
-            .select(`*`)
-            .eq('id', session.user.id)
-            .maybeSingle();
-
-          if (profileError) {
-            console.error("Error fetching profile on auth state change:", profileError);
-            throw profileError; // Let the catch block handle it
-          }
-            
-          let roleData: Role | null = null;
-          // Step 2: If the profile has a role_id, fetch the role details separately.
-          if (profile && profile.role_id) {
-              const { data: fetchedRole, error: roleError } = await supabase
-                  .from('roles')
-                  .select('*')
-                  .eq('id', profile.role_id)
-                  .single();
-              
-              if (roleError) {
-                  // Log the error but don't block login. The user can proceed without role permissions.
-                  console.error("Could not fetch role details:", roleError);
-                  showToast('No se pudieron cargar los permisos del rol.', 'error');
-              } else {
-                  roleData = fetchedRole;
-              }
-          }
-          
-          // Step 3: Construct the final user profile object.
-          const userProfile: UserProfile = { 
-            id: session.user.id, 
-            email: session.user.email!, 
-            full_name: profile?.full_name || session.user.email!,
-            avatar_url: profile?.avatar_url || null,
-            config: (profile?.config as any) || { base_currency: 'ARS', active_plan: 'Comercios' },
-            role: roleData,
-            role_id: profile?.role_id || null,
-            sucursal_id: profile?.sucursal_id || null
-          };
-          setUser(userProfile);
-          setIsLoggedIn(true);
-        } else {
-          setUser(null);
-          setIsLoggedIn(false);
-        }
-      } catch (error) {
-        console.error("Failed to process auth state change:", error);
-        showToast("Ocurrió un error al cargar tu perfil.", 'error');
-        // Ensure state is cleared on error
-        setUser(null);
-        setIsLoggedIn(false);
-      } finally {
-        // This is crucial: always stop loading, regardless of success or failure.
-        setLoading(false);
-      }
-    });
-
-    return () => {
-      authListener?.subscription.unsubscribe();
-    };
+    // Simulate initial loading
+    setTimeout(() => setLoading(false), 1000);
   }, []);
 
-  const handleLogout = async () => {
-    // Calling signOut will trigger the onAuthStateChange listener,
-    // which will handle clearing the user state and showing the login form.
-    const { error } = await supabase.auth.signOut();
-    if (error) {
-      console.error("Error al cerrar sesión:", error);
-      showToast("Ocurrió un error al intentar cerrar la sesión.", 'error');
-    }
+  const handleLogin = (userData: any) => {
+    setUser(userData);
+    setIsLoggedIn(true);
   };
-  
+
+  const handleLogout = () => {
+    setUser(null);
+    setIsLoggedIn(false);
+  };
+
   if (loading) {
-    return (
-       <div className="flex h-screen w-full items-center justify-center bg-slate-900 text-slate-100">
-          <p>Iniciando aplicación...</p>
-       </div>
-    );
+    return <LoadingSpinner />;
   }
 
   return (
-    <div className="min-h-screen font-sans">
-       {isLoggedIn && user ? (
-         <AppContextProvider user={user} setUser={setUser}>
-            <OnboardingProvider>
-              <Layout onLogout={handleLogout} />
-            </OnboardingProvider>
-         </AppContextProvider>
-        ) : (
-          <div className="flex items-center justify-center p-4 min-h-screen bg-black/30">
-            <AuthForm />
-          </div>
-        )}
+    <div style={{ minHeight: '100vh', fontFamily: 'system-ui, -apple-system, sans-serif' }}>
+      {isLoggedIn && user ? (
+        <Dashboard user={user} onLogout={handleLogout} />
+      ) : (
+        <AuthForm onLogin={handleLogin} />
+      )}
     </div>
   );
 };
